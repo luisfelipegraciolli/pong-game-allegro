@@ -1,0 +1,6 @@
+// exemplo
+
+LFG 3000
+GHA 2000
+SSD 900
+SSL 100

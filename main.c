@@ -1,88 +1,169 @@
-// PADROES DO SISTEMA
-#include <stdio.h>
-#include <stdbool.h>
-//BIBLIOTEAS
-#include "headers/must_init.h"
-#include "headers/player.h"
-//ALEGREO
 #include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
+#include "headers/consts.h"
+#include "headers/player.h"
+#include <stdio.h>
 
-// CONSTANTES
-#define FPS 30
-#define SCREEN_W 640
-#define SCREEN_H 480
-#define OFFSET_PLAYABLE_AREA 40
+// Fun��es
+void initializeGame();
+void updateGame();
+void drawGame();
+void cleanupGame();
 
+// Vari�veis globais
+ALLEGRO_DISPLAY* display = NULL;
+ALLEGRO_EVENT_QUEUE* event_queue = NULL;
+ALLEGRO_TIMER* timer = NULL;
+ALLEGRO_FONT* font = NULL;
+Paddle paddle1, paddle2;
+Ball ball;
+Player players;
 
-int main()
-{
-    Player new_player = init_player("LFG\0");
-
-    al_init();
-    al_install_keyboard();
-    al_init_image_addon();
-
-    must_init(al_init(), "allegro");
-    must_init(al_install_keyboard(), "keyboard");
-
-    ALLEGRO_TIMER* timer = al_create_timer(1.0 / FPS);
-    must_init(timer, "timer");
-    ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-    must_init(queue, "queue");
-    ALLEGRO_DISPLAY* disp = al_create_display(SCREEN_W, SCREEN_H);
-    must_init(disp, "display");
-    ALLEGRO_FONT* font = al_create_builtin_font();
-    must_init(font, "display");
-    ALLEGRO_BITMAP* apple = al_load_bitmap("images/apple.png");
-    must_init(apple, "display");
-
-    must_init(al_init_primitives_addon(), "primitives");
-
-
-    al_register_event_source(queue, al_get_keyboard_event_source());
-    al_register_event_source(queue, al_get_display_event_source(disp));
-    al_register_event_source(queue, al_get_timer_event_source(timer));
-
-    bool redraw = true;
-    ALLEGRO_EVENT event;
+int main() {
+    initializeGame();
 
     al_start_timer(timer);
-    while(1)
-    {
-        al_wait_for_event(queue, &event);
 
-        if(event.type == ALLEGRO_EVENT_TIMER)
-            redraw = true;
-        else if((event.type == ALLEGRO_EVENT_DISPLAY_CLOSE))
+    while (1) {
+        ALLEGRO_EVENT ev;
+        al_wait_for_event(event_queue, &ev);
+
+        if (ev.type == ALLEGRO_EVENT_TIMER) {
+            updateGame();
+            drawGame();
+        }
+        else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             break;
-
-        if(redraw && al_is_event_queue_empty(queue))
-        {
-            al_clear_to_color(al_map_rgb(42, 52, 64));
-            al_draw_text(font, al_map_rgb(255,255,255), 320, 0, ALLEGRO_ALIGN_CENTRE,"Aperte ESC para sair || Aperte 's' para mostrar suas pontuações");
-            al_draw_text(font, al_map_rgb(255,255,255), 320, 20, ALLEGRO_ALIGN_CENTRE,"Score: %d");
-
-            al_draw_bitmap(apple, 320,240, ALLEGRO_ALIGN_CENTRE);
-            
-            
-            al_draw_rounded_rectangle(OFFSET_PLAYABLE_AREA, OFFSET_PLAYABLE_AREA, SCREEN_W-OFFSET_PLAYABLE_AREA, SCREEN_H-OFFSET_PLAYABLE_AREA, 2, 2, al_map_rgb(255,255,255),1.2);
-
-
-            al_flip_display();
-
-            redraw = false;
         }
     }
 
-
-    al_destroy_bitmap(apple);
-    al_destroy_font(font);
-    al_destroy_display(disp);
-    al_destroy_timer(timer);
-    al_destroy_event_queue(queue);
+    cleanupGame();
 
     return 0;
+}
+
+void initializeGame() {
+    // Inicializa a Allegro
+    al_init();
+    al_init_primitives_addon();
+    al_init_font_addon();
+    al_init_ttf_addon();
+
+    
+    init_players(&players, "LFG\0", "AAA\0");
+
+
+
+    // Configura��o do display
+    display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
+    al_set_window_title(display, "Pong Game");
+
+    // Configura��o do timer
+    timer = al_create_timer(1.0 / FPS);
+
+    // Configura��o da fila de eventos
+    event_queue = al_create_event_queue();
+
+    //Configuracao font
+    font = al_load_font("MINE.ttf", 20, 0);
+
+    al_register_event_source(event_queue, al_get_display_event_source(display));
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+    
+    // Inicializa��o das posi��es iniciais das raquetes e da bola
+    paddle1.x = 10;
+    paddle1.y = SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
+    paddle1.speedY = 5;
+
+    paddle2.x = SCREEN_WIDTH - PADDLE_WIDTH - 10;
+    paddle2.y = SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
+    paddle2.speedY = 5;
+
+    ball.x = SCREEN_WIDTH / 2;
+    ball.y = SCREEN_HEIGHT / 2;
+    ball.speedX = 2;
+    ball.speedY = 2;
+}
+
+void updateGame() {
+    al_install_keyboard();
+
+    // Atualiza a posicao da bola
+    ball.x += ball.speedX;
+    ball.y += ball.speedY;
+
+    // Verifica colisoes com as bordas da tela
+    if (ball.y - BALL_SIZE / 2 < 0+OFFSET || ball.y + BALL_SIZE / 2 > SCREEN_HEIGHT-OFFSET) {
+        ball.speedY = -ball.speedY;
+    }
+
+    //Verifica se a bola foi para fora
+    if (ball.x - BALL_SIZE / 2 < 0) {
+        ball.x = SCREEN_WIDTH/2;
+        ball.y = SCREEN_HEIGHT/2;
+        players.score2 += 100;
+    }
+    if(ball.x + BALL_SIZE / 2 > SCREEN_WIDTH){
+        ball.x = SCREEN_WIDTH/2;
+        ball.y = SCREEN_HEIGHT/2;
+        players.score1 += 100;
+
+    }
+
+    // Verifica colis�es com as raquetes
+    if (ball.x - BALL_SIZE / 2 < paddle1.x + PADDLE_WIDTH+2 &&
+        ball.x + BALL_SIZE / 2 > paddle1.x &&
+        ball.y - BALL_SIZE / 2 < paddle1.y + PADDLE_HEIGHT+2 &&
+        ball.y + BALL_SIZE / 2 > paddle1.y) {
+        ball.speedX = -ball.speedX;
+    }
+
+    if (ball.x - BALL_SIZE / 2 < paddle2.x + PADDLE_WIDTH+2 &&
+        ball.x + BALL_SIZE / 2 > paddle2.x &&
+        ball.y - BALL_SIZE / 2 < paddle2.y + PADDLE_HEIGHT+2 &&
+        ball.y + BALL_SIZE / 2 > paddle2.y) {
+        ball.speedX = -ball.speedX;
+    }
+
+    // Movimenta as raquetes
+    ALLEGRO_KEYBOARD_STATE keyState;
+
+    if (al_is_keyboard_installed()) {
+        al_get_keyboard_state(&keyState);
+        if (al_key_down(&keyState, ALLEGRO_KEY_W) && paddle1.y > 0) {
+            paddle1.y -= paddle1.speedY;
+        }
+
+        if (al_key_down(&keyState, ALLEGRO_KEY_S) && paddle1.y + PADDLE_HEIGHT < SCREEN_HEIGHT) {
+            paddle1.y += paddle1.speedY;
+        }
+
+        if (al_key_down(&keyState, ALLEGRO_KEY_UP) && paddle2.y > 0) {
+            paddle2.y -= paddle2.speedY;
+        }
+
+        if (al_key_down(&keyState, ALLEGRO_KEY_DOWN) && paddle2.y + PADDLE_HEIGHT < SCREEN_HEIGHT) {
+            paddle2.y += paddle2.speedY;
+        }
+    }
+}
+void drawGame() {
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    // Desenha as raquetes
+    al_draw_filled_rectangle(paddle1.x, paddle1.y, paddle1.x + PADDLE_WIDTH, paddle1.y + PADDLE_HEIGHT, al_map_rgb(255, 255, 255));
+    al_draw_filled_rectangle(paddle2.x, paddle2.y, paddle2.x + PADDLE_WIDTH, paddle2.y + PADDLE_HEIGHT, al_map_rgb(255, 255, 255));
+
+    // Desenha a bola
+    al_draw_filled_circle(ball.x, ball.y, BALL_SIZE / 2, al_map_rgb(255, 255, 255));
+    al_draw_textf(font, al_map_rgb(255, 255, 255), SCREEN_WIDTH/2, 20, ALLEGRO_ALIGN_CENTER, "- SCORE: %d | %d -", players.score1, players.score2);
+    al_flip_display();
+}
+
+void cleanupGame() {
+    al_destroy_display(display);
+    al_destroy_event_queue(event_queue);
+    al_destroy_timer(timer);
+    al_destroy_font(font);
 }

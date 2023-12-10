@@ -1,0 +1,18 @@
+Para fazer
+
+implementer um menu que tenha tres opcoes onde voce pode clicar com o moused
+    jogar
+    score
+    sair
+quando clicar em jogar ir para outra tela pedindo o nome do jogador 1 e 2
+    jogar esses nomes numa variavel e escrever em um arquivo
+quando clicar em score ir para uma tela contendo os scores de jogos anteriroes ordenados por pontos
+    implementar um botao para voltar
+    (o loop dessa tela estara dentro do loop do menu)
+quando clicar em sair fechar o jogo
+
+fopen em modo leitura le os nomes
+fopen em modo de escrita para apagar os nomes
+
+escrever scores em ordem de chegada como um historico de partidas
+

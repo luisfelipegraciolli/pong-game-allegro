@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "player.h": "c"
+        "player.h": "c",
+        "queue": "c",
+        "consts.h": "c"
     }
 }

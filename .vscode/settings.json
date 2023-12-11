@@ -2,6 +2,7 @@
     "files.associations": {
         "player.h": "c",
         "queue": "c",
-        "consts.h": "c"
+        "consts.h": "c",
+        "__node_handle": "c"
     }
 }

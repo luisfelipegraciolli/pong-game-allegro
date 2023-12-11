@@ -1,1 +1,2 @@
-lfg 0 zxa 0
+lfg 100 zxa 0
+lfg 200 zxa 0

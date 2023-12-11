@@ -28,7 +28,7 @@ ALLEGRO_SAMPLE* point = NULL;
 Paddle paddle1, paddle2;
 Ball ball;
 Player players;
-StackScores matchHistory;
+
 
 
 int main() {
@@ -54,11 +54,10 @@ int main() {
     
     //Player manipulations
     
-    FILE* inputName = fopen("score/name.txt", "r");
-    FILE* output = fopen("score/mat.txt", "a");
     char pName1[4];
     char pName2[4];
 
+    FILE* inputName = fopen("score/name.txt", "r");
     //Leitura
     fscanf(inputName, "%s %s", pName1, pName2);
     //apaga o conetudo do arquivo para o proximo jogador
@@ -67,7 +66,7 @@ int main() {
 
     init_players(&players, pName1, pName2);
     
-    init_stack(&matchHistory);
+
 
     while (1) {
         ALLEGRO_EVENT ev;
@@ -84,11 +83,13 @@ int main() {
         }
     }
 
+    FILE* output = fopen("score/mat.txt", "a");
     output_file(players, output);
     fclose(output);
-    FILE* mat = fopen("score/mat.txt", "r+");
-    FILE* out = fopen("score/matchhistory.txt", "w");
-    reverse(&matchHistory, mat, out);
+    FILE* inputFinal = fopen("score/mat.txt", "r");
+    FILE* outputFinal = fopen("score/matchhistory.txt", "w");
+    insert_history(inputFinal, outputFinal);
+
     cleanupGame();
 
     return 0;

@@ -49,22 +49,24 @@ void output_file(Player s, FILE *f)
 }
 
 void insert_history(FILE* input, FILE* output){
-    Node* head = new_node();
-    
+    Node* head;
+    Player stack[100];
+    int n = 0;
     char name1[4];
     char name2[4];
     int score1, score2;
     while(fscanf(input, "%s %d %s %d", name1, &score1, name2, &score2) == 4){
         Player temp;
-        printf("String1: %s, String2: %s, Número1: %d, Número2: %d\n", name1, name2, score1, score2);
         strcpy(temp.name1, name1);
         strcpy(temp.name2, name2);
         temp.score1 = score1;
         temp.score2 = score2;
-        head = push_front(head, temp);
+        stack[n++] = temp;
+
+        
     }
 
-    for(Node* n = head; n != NULL; n = n->next)
-        fprintf(output, "%s %d %s %d", head->data.name1, head->data.score1, head->data.name2, head->data.score2);
-    
+    for(int i = n-1; i>0; i--)
+        fprintf(output,"%s %d %s %d\n", stack[i].name1, stack[i].score1, stack[i].name2, stack[i].score2);
+
 }

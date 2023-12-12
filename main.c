@@ -25,6 +25,8 @@ ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_FONT* font = NULL;
 ALLEGRO_SAMPLE* bounce = NULL;
 ALLEGRO_SAMPLE* point = NULL;
+
+
 Paddle paddle1, paddle2;
 Ball ball;
 Player players;
@@ -40,7 +42,7 @@ int main() {
     al_init_ttf_addon();
     al_install_audio();
     al_init_acodec_addon();
-    al_reserve_samples(10);
+    al_reserve_samples(2);
     al_install_keyboard();
     al_install_mouse();
     
@@ -66,7 +68,7 @@ int main() {
     fclose(inputName);
 
     init_players(&players, pName1, pName2);
-    
+
 
 
     while (1) {
@@ -145,6 +147,7 @@ void initializeGame() {
 }
 
 void updateGame() {
+
 
 
     // Atualiza a posicao da bola

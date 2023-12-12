@@ -3,13 +3,14 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 420
 #define PADDLE_WIDTH 10
-#define PADDLE_HEIGHT 60
-#define BALL_SIZE 10
+#define PADDLE_HEIGHT 80
+#define BALL_SIZE 15
 #define FPS 30
 #define OFFSET 60
+#define BALLSPEED 10
+#define PADDLESPEED 10
 
-#define KEY_SEEN     1
-#define KEY_RELEASED 2
+
 // Estruturas
 typedef struct {
     float x, y;

@@ -109,8 +109,7 @@ void drawnMenu(){
 }
 void initializeGame() {
 
-    
-    init_players(&players, "LFG\0", "AAA\0");
+
 
     // Configura��o do display
     display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -131,10 +130,10 @@ void initializeGame() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     
-    // Inicializa��o das posi��es iniciais das raquetes e da bola
-    paddle1.x = 10;
+    // Inicializao das posicoes iniciais das raquetes e da bola
+    paddle1.x = PADDLESPEED;
     paddle1.y = SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-    paddle1.speedY = 10;
+    paddle1.speedY = PADDLESPEED;
 
     paddle2.x = SCREEN_WIDTH - PADDLE_WIDTH - 10;
     paddle2.y = SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
@@ -142,8 +141,8 @@ void initializeGame() {
 
     ball.x = SCREEN_WIDTH / 2;
     ball.y = SCREEN_HEIGHT / 2;
-    ball.speedX = 10;
-    ball.speedY = 10;
+    ball.speedX = BALLSPEED;
+    ball.speedY = BALLSPEED;
 }
 
 void updateGame() {
@@ -217,16 +216,6 @@ void updateGame() {
 
 }
 
-    
-
-
-    
-
-
-
-    
-
-
 void drawGame() {
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
@@ -245,4 +234,6 @@ void cleanupGame() {
     al_destroy_event_queue(event_queue);
     al_destroy_timer(timer);
     al_destroy_font(font);
+    al_destroy_sample(bounce);
+    al_destroy_sample(point);
 }

@@ -88,10 +88,10 @@ int main() {
         }
     }
 
-    FILE* output = fopen("score/mat.txt", "a");
+    FILE* output = fopen("score/temp.txt", "a");
     output_file(players, output);
     fclose(output);
-    FILE* inputFinal = fopen("score/mat.txt", "r");
+    FILE* inputFinal = fopen("score/temp.txt", "r");
     FILE* outputFinal = fopen("score/matchhistory.txt", "w");
     insert_history(inputFinal, outputFinal);
 

@@ -3,6 +3,7 @@
         "player.h": "c",
         "queue": "c",
         "consts.h": "c",
-        "__node_handle": "c"
+        "__node_handle": "c",
+        "stack": "c"
     }
 }

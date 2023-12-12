@@ -28,6 +28,7 @@ ALLEGRO_SAMPLE* point = NULL;
 Paddle paddle1, paddle2;
 Ball ball;
 Player players;
+bool keys[ALLEGRO_KEY_MAX] = {0};
 
 
 
@@ -75,10 +76,12 @@ int main() {
         if (ev.type == ALLEGRO_EVENT_TIMER) {
             updateGame();
             drawGame();
+        }else if(ev.type == ALLEGRO_EVENT_KEY_DOWN){
+            keys[ev.keyboard.keycode] = true;
+        }else if(ev.type == ALLEGRO_EVENT_KEY_UP){
+            keys[ev.keyboard.keycode] = false;
         }
         else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-
-            
             break;
         }
     }
@@ -129,17 +132,18 @@ void initializeGame() {
     // Inicializa��o das posi��es iniciais das raquetes e da bola
     paddle1.x = 10;
     paddle1.y = SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-    paddle1.speedY = 5;
+    paddle1.speedY = 10;
 
     paddle2.x = SCREEN_WIDTH - PADDLE_WIDTH - 10;
     paddle2.y = SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-    paddle2.speedY = 5;
+    paddle2.speedY = 10;
 
     ball.x = SCREEN_WIDTH / 2;
     ball.y = SCREEN_HEIGHT / 2;
-    ball.speedX = 6;
-    ball.speedY = 6;
+    ball.speedX = 10;
+    ball.speedY = 10;
 }
+
 void updateGame() {
 
 
@@ -168,7 +172,7 @@ void updateGame() {
 
     }
 
-    // Verifica colis�es com as raquetes
+    // Verifica colisoes com as raquetes
     if (ball.x - BALL_SIZE / 2 < paddle1.x + PADDLE_WIDTH+5 &&
         ball.x + BALL_SIZE / 2 > paddle1.x &&
         ball.y - BALL_SIZE / 2 < paddle1.y + PADDLE_HEIGHT+5 &&
@@ -189,29 +193,37 @@ void updateGame() {
         al_play_sample(bounce, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
     }
 
-    // Movimenta as raquetes
-    ALLEGRO_KEYBOARD_STATE keyState;
+    // Movimenta as raquete
 
-    if (al_is_keyboard_installed()) {
-        al_get_keyboard_state(&keyState);
-        if (al_key_down(&keyState, ALLEGRO_KEY_W) && paddle1.y > 0) {
-            paddle1.y -= paddle1.speedY;
-        }
 
-        if (al_key_down(&keyState, ALLEGRO_KEY_S) && paddle1.y + PADDLE_HEIGHT < SCREEN_HEIGHT) {
-            paddle1.y += paddle1.speedY;
-        }
+    if (keys[ALLEGRO_KEY_W] && paddle1.y > 0) {
+        paddle1.y -= paddle1.speedY;
+    }
 
-        if (al_key_down(&keyState, ALLEGRO_KEY_UP) && paddle2.y > 0) {
-            paddle2.y -= paddle2.speedY;
-        }
+    if (keys[ALLEGRO_KEY_S]&& paddle1.y + PADDLE_HEIGHT < SCREEN_HEIGHT) {
+        paddle1.y += paddle1.speedY;
+    }
 
-        if (al_key_down(&keyState, ALLEGRO_KEY_DOWN) && paddle2.y + PADDLE_HEIGHT < SCREEN_HEIGHT) {
-            paddle2.y += paddle2.speedY;
-        }
+    if ((keys[ALLEGRO_KEY_UP]) && paddle2.y > 0) {
+        paddle2.y -= paddle2.speedY;
+    }
+
+    if (keys[ALLEGRO_KEY_DOWN] && paddle2.y + PADDLE_HEIGHT < SCREEN_HEIGHT) {
+        paddle2.y += paddle2.speedY;
     }
 
 }
+
+    
+
+
+    
+
+
+
+    
+
+
 void drawGame() {
     al_clear_to_color(al_map_rgb(0, 0, 0));
 

@@ -2,31 +2,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
+#define MAXSIZE 1024    
 typedef struct{
     long score1;
     char name1[4];
     long score2;
     char name2[4];
 } Player;
-
-typedef struct Node{
-    Player data;
-    struct Node* next;
-}Node;
-
-Node* new_node(Player player){
-    Node* node = (Node*) malloc(sizeof(Node));
-    node->data = player;
-    node->next = NULL;
-    return node;
-}
-Node* push_front(Node* head, Player player){
-    Node* new_head = new_node(player);
-    new_head->next = head;
-    return new_head;
-}
-
 
 void init_players(Player *player, char name1[], char name2[])
 {
@@ -49,8 +32,7 @@ void output_file(Player s, FILE *f)
 }
 
 void insert_history(FILE* input, FILE* output){
-    Node* head;
-    Player stack[100];
+    Player stack[MAXSIZE];
     int n = 0;
     char name1[4];
     char name2[4];
@@ -62,11 +44,9 @@ void insert_history(FILE* input, FILE* output){
         temp.score1 = score1;
         temp.score2 = score2;
         stack[n++] = temp;
-
-        
     }
 
-    for(int i = n-1; i>0; i--)
+    for(int i = n-1; i>=0; i--){
         fprintf(output,"%s %d %s %d\n", stack[i].name1, stack[i].score1, stack[i].name2, stack[i].score2);
-
+    }
 }

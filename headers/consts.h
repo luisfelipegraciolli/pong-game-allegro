@@ -8,6 +8,8 @@
 #define FPS 30
 #define OFFSET 60
 
+#define KEY_SEEN     1
+#define KEY_RELEASED 2
 // Estruturas
 typedef struct {
     float x, y;
